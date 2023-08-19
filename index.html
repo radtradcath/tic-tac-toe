@@ -10,6 +10,22 @@
 </head>
 
 <body>
+    <h1>Tic-Tac-Toe</h1>
+    <div class="input-container">        
+        <form>
+            <label for="username">Enter your Name</label>
+            <input type="text" id="username" name="username" required>
+            <fieldset>
+                <legend>Please, select you mark:</legend>
+                <input type="radio" id="x-marker" name="x-marker">
+                <label for="x-marker">X</label>
+
+                <input type="radio" id="o-marker" name="o-marker">
+                <label for="o-marker">O</label>
+            </fieldset>
+            <button type="submit">JOGAR</button>
+        </form>
+    </div>
     <div class="gameboard">
         <div id="0" class="cell"></div>
         <div id="1" class="cell"></div>

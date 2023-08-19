@@ -1,16 +1,7 @@
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
 .gameboard {
     width: 700px;
     height: 700px;
     display: grid;
-    justify-items:;
     grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
     grid-template-areas: 
         "cell-1 cell-2 cell-3"    
@@ -40,8 +31,6 @@ body {
 .gameboard div:nth-child(3n + 1) {
     border-left: 0;
 }
-
-
 
 #cell-1 {
     grid-area: cell-1;
@@ -78,3 +67,4 @@ body {
 #cell-9 {
     grid-area: cell-9;
 }
+
