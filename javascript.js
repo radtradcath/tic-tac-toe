@@ -67,15 +67,53 @@ function GameController() {
 
 function DisplayController() {
     let gameboardContainer = document.querySelector('.gameboard-container');
-    let newGame = GameController();
-    let btnGetName = document.querySelector('#getNames');
-    let inputName1 = document.querySelector('#username1');
-    let inputName2 = document.querySelector('#username2');
+    let newGame = GameController();      
+    let inputContainer = document.querySelector('.input-container');    
     let displayTurn = document.querySelector('.display-turn');
     let displayWinner = document.querySelector('.display-winner');
     let resetBtn = document.querySelector('.reset');
     let firstPlayer;
     let secondPlayer;
+
+    function hideForm() {
+        while (inputContainer.firstChild) {
+            inputContainer.removeChild(inputContainer.firstChild);
+        }
+    }
+
+    function showForm() {
+        let form = document.createElement('form');
+        let user1label = document.createElement('label');
+        let username1 = document.createElement('input');
+        let user2label = document.createElement('label');
+        let username2 = document.createElement('input');
+        let getNamesBtn = document.createElement('button');
+
+        user1label.setAttribute('for', 'username1');
+        user1label.textContent = "Enter Player 1 name:";
+        username1.setAttribute('type', 'text');
+        username1.setAttribute('id', 'username1');
+        username1.setAttribute('name', 'username1');
+
+        user2label.setAttribute('for', 'username2');
+        user2label.textContent = "Enter Player 2 name:";
+        username2.setAttribute('type', 'text');
+        username2.setAttribute('id', 'username2');
+        username2.setAttribute('name', 'username2');
+
+        getNamesBtn.setAttribute('type', 'submit');
+        getNamesBtn.setAttribute('id', 'getNames');
+        getNamesBtn.textContent = 'JOGAR';
+
+        inputContainer.appendChild(form);
+        form.appendChild(user1label);
+        form.appendChild(username1);
+        form.appendChild(user2label);
+        form.appendChild(username2);
+        form.appendChild(getNamesBtn);
+
+        getNamesBtn.addEventListener('click', handleNamesEvent);
+    }
 
     function hideGrid() {
         while (gameboardContainer.firstChild) {
@@ -102,12 +140,14 @@ function DisplayController() {
     }
 
     function handleNamesEvent(e) {
-        let player1Name = inputName1.value;
-        let player2Name = inputName2.value;
+        console.log('te');
+        let player1Name = username1.value;
+        let player2Name = username2.value;
+        e.preventDefault();
+        hideForm();
         showGrid();
         firstPlayer = playerFactory(player1Name, 'X');
         secondPlayer = playerFactory(player2Name, 'O');
-        e.preventDefault();
         displayTurn.textContent = `${firstPlayer.name}'s turn`;
     }
 
@@ -149,24 +189,28 @@ function DisplayController() {
     }
 
     function resetGame() {
+        if (!gameboardContainer.firstChild) {
+            return void(0);
+        }
         displayTurn.textContent = "";
         displayWinner.textContent = "";
-        inputName1.value = "";
-        inputName2.value = "";
         Gameboard.clearBoard();
         firstPlayer.name = undefined;
         secondPlayer.name = undefined;
+        GameController();
         hideGrid();
+        showForm();
     }
 
-    btnGetName.addEventListener('click', handleNamesEvent);
-
     resetBtn.addEventListener('click', resetGame);
+    showForm();
 
     return {
         renderGameboard,
         showGrid,
-        hideGrid
+        hideGrid,
+        showForm,
+        hideForm,
     }
 }
 

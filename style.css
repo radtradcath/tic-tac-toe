@@ -1,13 +1,67 @@
+body {
+    margin: 0;
+    
+}
+
+.gameboard-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h1:first-child {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.input-container {
+    position: absolute;
+    left: 44%;
+    top: 35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.reset {
+    position: absolute;
+    top: 80px;
+    left: 46%;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.display-winner {
+    text-align: center;
+    margin-top: 60px;
+}
+
+.display-turn {
+    text-align: center;
+    margin-bottom: 100px;
+}
+
 .gameboard {
-    width: 700px;
-    height: 700px;
+    width: 600px;
+    height: 600px;
     display: grid;
-    grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
-    grid-template-areas: 
-        "cell-1 cell-2 cell-3"    
+    grid-template: 200px 200px 200px / 200px 200px 200px;
+    grid-template-areas:
+        "cell-1 cell-2 cell-3"
         "cell-4 cell-5 cell-6"
         "cell-7 cell-8 cell-9"
     ;
+}
+
+input-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .gameboard div {
@@ -67,4 +121,3 @@
 #cell-9 {
     grid-area: cell-9;
 }
-
