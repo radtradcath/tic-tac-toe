@@ -1,12 +1,21 @@
-let cells = document.querySelectorAll('.cell');
+let Gameboard = (() => {
+    let gameboard = [null, null, null, null, null, null, null, null, null];
+    let turn = 0;
+    return {
+        gameboard,
+        turn
+    }
+})();
 
-let Gameboard = {
-    gameboard: [null, null, null, null, null, null, null, null, null],
-    turn: 0,
-}
 
 let playerFactory = function (name, mark) {
+   let chooseCell = function(cell) {
+     if (!Gameboard.gameboard[cell]) {
+        return Gameboard.gameboard[cell] = this.mark;
+    }
+}
     return {
+        chooseCell,
         name,
         mark,
     };
@@ -16,38 +25,33 @@ let player1 = playerFactory('player1', 'X');
 let player2 = playerFactory('player2', 'O');
 
 
-let renderGameboard = function () {
+let renderGameboard = function () {    
     for (i = 0; i <= Gameboard.gameboard.length - 1; i++) {
         cells[i].textContent = Gameboard.gameboard[i];
     }
 }
 
-let chooseCell = function (player, cell) {
-    if (!Gameboard.gameboard[cell]) {
-        return Gameboard.gameboard[cell] = player.mark;
-    }
-}
-
-let playerMark = function (e) {
+let playGame = function (e) {
     if (e.target.textContent !== "") {
         return void (0);
     }
     else if (Gameboard.turn % 2 == 0) {
-        chooseCell(player1, e.target.id);
+        player1.chooseCell(e.target.id);
         Gameboard.turn++;
         renderGameboard();
         checkWinner('X');
     } else {
-        chooseCell(player2, e.target.id);
+        player2.chooseCell(e.target.id);
         Gameboard.turn++
         renderGameboard();
         checkWinner('O');
     }
 }
 
+let cells = document.querySelectorAll('.cell');
 cells.forEach((c) => {
-    c.addEventListener('click', playerMark);
-});
+        c.addEventListener('click', playGame);
+    });
 
 let checkWinner = function (marker) {
     if (((Gameboard.gameboard[0] === marker) && (Gameboard.gameboard[1] === marker) && (Gameboard.gameboard[2] === marker)) ||
