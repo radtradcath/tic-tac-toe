@@ -5,6 +5,13 @@ body {
     background-color: #fee2e2;
 }
 
+button:hover,
+form button:hover {
+    border: 1px solid rgba(77, 77, 77, 0.349);
+    color: white;
+    background-color: rgba(184, 180, 180, 0.322);
+}
+
 .gameboard-container {
     display: flex;
     justify-content: center;
@@ -33,6 +40,7 @@ body {
 }
 
 .reset {
+    font-size: 1.2rem;
     color:  #ef4444;
     background: transparent;
     background-color: aliceblue;
@@ -41,8 +49,19 @@ body {
     border-radius: 10px;
     padding: 12px 15px;
     position: absolute;
-    top: 70px;
-    left: 47%;
+    top: 68px;
+    left: 45.9%;
+}
+
+.input-container button {
+    font-size: 1.5rem;
+    color:  #ef4444;
+    background: transparent;
+    background-color: aliceblue;
+    outline: none;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 12px 15px;
 }
 
 form {
@@ -62,7 +81,7 @@ input:focus {
     height: 40px;
     width: 300px;
     margin-bottom: 40px;
-    padding: auto 50px;
+    padding-left: 15px;
 }
 
 label {
@@ -74,6 +93,10 @@ label {
 
 
 .display-winner {    
+    font-size: 3rem;
+    color: #ecea4a;
+    -webkit-text-stroke: 1px rgb(85, 65, 65);
+    text-align: center;
     text-align: center;
     margin-top: 60px;
     bottom: 40px;
@@ -81,6 +104,9 @@ label {
 }
 
 .display-turn {
+    font-size: 2.5rem;
+    color: #ef4444;
+    -webkit-text-stroke: 1px rgb(85, 65, 65);
     text-align: center;
     margin-bottom: 50px;
     margin-top: 0;

@@ -104,7 +104,7 @@ function DisplayController() {
 
         getNamesBtn.setAttribute('type', 'submit');
         getNamesBtn.setAttribute('id', 'getNames');
-        getNamesBtn.textContent = 'JOGAR';
+        getNamesBtn.textContent = 'PLAY';
 
         inputContainer.appendChild(form);
         form.appendChild(user1label);
