@@ -15,8 +15,8 @@ let playerFactory = function (name, mark) {
 
 function GameController() {
     let turn = 0;
-    let playerTurn;
-    let gameFinished = false;    
+    let playerMark;
+    let gameFinished = false;
 
     function chooseCell(cell, playerMark) {
         if (!Gameboard.gameboard[cell]) {
@@ -24,16 +24,26 @@ function GameController() {
         }
     }
 
+    function aiChooseCell() {
+        let randomCell;
+
+        while (Gameboard.gameboard[randomCell] !== null) {
+            randomCell = Math.floor(Math.random() * 9);
+        };
+        return randomCell;
+    }
+
+
     function handleTurn(player1, player2) {
-        if (turn % 2 == 0) {
-            playerTurn = player1.mark;
-            turn++;            
-            return playerTurn;
+        if (this.turn % 2 == 0) {
+            this.playerMark = player1.mark;
+            this.turn++;
+            return this.playerMark;
 
         } else {
-            playerTurn = player2.mark;            
-            turn++
-            return playerTurn;
+            this.playerMark = player2.mark;
+            this.turn++
+            return this.playerMark;
         }
     }
 
@@ -50,32 +60,36 @@ function GameController() {
             return marker;
 
         } else if (Gameboard.gameboard.indexOf(null) === -1) {
-            return 'That\' a tie';
+            this.gameFinished = true;
+            return 'That\'s a tie';
         }
         else {
             return;
         }
     }
     return {
+        aiChooseCell,
         handleTurn,
         chooseCell,
         checkWinner,
         gameFinished,
+        turn,
+        playerMark,
     }
 }
 
 
 function DisplayController() {
     let gameboardContainer = document.querySelector('.gameboard-container');
-    let form = document.querySelector('form');
     let newGame = GameController();
-    console.log(newGame);
     let inputContainer = document.querySelector('.input-container');
     let displayTurn = document.querySelector('.display-turn');
     let displayWinner = document.querySelector('.display-winner');
     let resetBtn = document.querySelector('.reset');
+    let aiBtn = document.querySelector('#aiBtn');
     let firstPlayer;
     let secondPlayer;
+    let aiPlayer = false;
 
     function hideForm() {
         while (inputContainer.firstChild) {
@@ -91,7 +105,9 @@ function DisplayController() {
         let username2 = document.createElement('input');
         let getNamesBtn = document.createElement('button');
 
+
         user1label.setAttribute('for', 'username1');
+        user1label.setAttribute('id', 'user1label');
         user1label.textContent = "Enter Player 1 name:";
         username1.setAttribute('type', 'text');
         username1.setAttribute('id', 'username1');
@@ -99,6 +115,7 @@ function DisplayController() {
         username1.setAttribute('required', "");
 
         user2label.setAttribute('for', 'username2');
+        user2label.setAttribute('id', 'user2label');
         user2label.textContent = "Enter Player 2 name:";
         username2.setAttribute('type', 'text');
         username2.setAttribute('id', 'username2');
@@ -115,6 +132,7 @@ function DisplayController() {
         form.appendChild(user2label);
         form.appendChild(username2);
         form.appendChild(getNamesBtn);
+
 
         getNamesBtn.addEventListener('click', handleNamesEvent);
     }
@@ -142,21 +160,42 @@ function DisplayController() {
             c.addEventListener('click', handleGameEvent);
         });
     }
+    aiBtn.addEventListener('click', handleAiEvent);
+
+    function handleAiEvent() {
+        let form = document.querySelector('form');
+        let userName2 = document.querySelector('#username2');
+        let user2label = document.querySelector('#user2label');
+        aiPlayer = true;
+        form.removeChild(userName2);
+        form.removeChild(user2label);
+    }
 
     function handleNamesEvent(e) {
-        let form = document.querySelector('form');   
+        let form = document.querySelector('form');
         let isFormValid = form.checkValidity();
+        let player1Name;
+        let player2Name;
         if (!isFormValid) {
             form.reportValidity();
-        } else {
-        let player1Name = username1.value;
-        let player2Name = username2.value;
-        e.preventDefault();
-        hideForm();
-        showGrid();
-        firstPlayer = playerFactory(player1Name, 'X');
-        secondPlayer = playerFactory(player2Name, 'O');
-        displayTurn.textContent = `${firstPlayer.name}'s turn`;
+        } else if (!aiPlayer) {
+            player1Name = username1.value;
+            player2Name = username2.value;
+            e.preventDefault();
+            hideForm();
+            showGrid();
+            firstPlayer = playerFactory(player1Name, 'X');
+            secondPlayer = playerFactory(player2Name, 'O');
+            displayTurn.textContent = `${firstPlayer.name}'s turn`;
+        } else if (aiPlayer) {
+            player1Name = username1.value;
+            player2Name = 'Computer';
+            e.preventDefault();
+            hideForm();
+            showGrid();
+            firstPlayer = playerFactory(player1Name, 'X');
+            secondPlayer = playerFactory('Computer', 'O');
+            displayTurn.textContent = `${firstPlayer.name}'s turn`;
         }
     }
 
@@ -169,12 +208,14 @@ function DisplayController() {
         if (newGame.checkWinner(winner) === 'X') {
             displayWinner.textContent = `${firstPlayer.name} is the winner!`
             displayTurn.textContent = "";
-            console.log(newGame);
 
         } else if (newGame.checkWinner(winner) === 'O') {
             displayWinner.textContent = `${secondPlayer.name} is the winner!`
             displayTurn.textContent = "";
-            console.log(newGame);
+
+        } else if (newGame.checkWinner(winner) === 'That\'s a tie') {
+            displayWinner.textContent = 'That\'s a tie';
+            displayTurn.textContent = ""
         }
     }
 
@@ -186,16 +227,21 @@ function DisplayController() {
         }
     }
 
-    function handleGameEvent(e) {        
+    function handleGameEvent(e) {
         if (e.target.textContent !== "" || !firstPlayer || !secondPlayer || firstPlayer.name === undefined || secondPlayer.name === undefined || newGame.gameFinished === true) {
             return void (0);
-
         } else {
-            let playerTurn = newGame.handleTurn(firstPlayer, secondPlayer);
-            newGame.chooseCell(e.target.id, playerTurn);
-            renderGameboard();
-            updateDisplayTurn();
-            checkEndGame(playerTurn);
+            if (aiPlayer === true) {
+                newGame.chooseCell(e.target.id, newGame.handleTurn(firstPlayer, secondPlayer));
+                checkEndGame(newGame.playerMark);
+                if (Gameboard.gameboard.includes(null)) {
+                    newGame.chooseCell(newGame.aiChooseCell(), newGame.handleTurn(firstPlayer, secondPlayer));
+                }
+                checkEndGame(newGame.playerMark);
+                renderGameboard();
+                updateDisplayTurn();
+            }
+
         }
     }
 
@@ -226,4 +272,4 @@ function DisplayController() {
     }
 }
 
-DisplayController();
+let handleDOM = DisplayController();
