@@ -1,7 +1,7 @@
 let Gameboard = {
     gameboard: [null, null, null, null, null, null, null, null, null],
 
-    clearBoard: function() {
+    clearBoard: function () {
         Gameboard.gameboard = [null, null, null, null, null, null, null, null, null]
     },
 };
@@ -16,6 +16,7 @@ let playerFactory = function (name, mark) {
 function GameController() {
     let turn = 0;
     let playerTurn;
+    let gameFinished = false;    
 
     function chooseCell(cell, playerMark) {
         if (!Gameboard.gameboard[cell]) {
@@ -26,13 +27,11 @@ function GameController() {
     function handleTurn(player1, player2) {
         if (turn % 2 == 0) {
             playerTurn = player1.mark;
-            turn++;
-            console.log(playerTurn);
+            turn++;            
             return playerTurn;
 
         } else {
-            playerTurn = player2.mark;
-            console.log(playerTurn);
+            playerTurn = player2.mark;            
             turn++
             return playerTurn;
         }
@@ -47,7 +46,7 @@ function GameController() {
             ((Gameboard.gameboard[2] === marker) && (Gameboard.gameboard[5] === marker) && (Gameboard.gameboard[8] === marker)) ||
             ((Gameboard.gameboard[0] === marker) && (Gameboard.gameboard[4] === marker) && (Gameboard.gameboard[8] === marker)) ||
             ((Gameboard.gameboard[2] === marker) && (Gameboard.gameboard[4] === marker) && (Gameboard.gameboard[6] === marker))) {
-
+            this.gameFinished = true;
             return marker;
 
         } else if (Gameboard.gameboard.indexOf(null) === -1) {
@@ -61,14 +60,16 @@ function GameController() {
         handleTurn,
         chooseCell,
         checkWinner,
+        gameFinished,
     }
 }
 
 
 function DisplayController() {
     let gameboardContainer = document.querySelector('.gameboard-container');
-    let newGame = GameController();      
-    let inputContainer = document.querySelector('.input-container');    
+    let newGame = GameController();
+    console.log(newGame);
+    let inputContainer = document.querySelector('.input-container');
     let displayTurn = document.querySelector('.display-turn');
     let displayWinner = document.querySelector('.display-winner');
     let resetBtn = document.querySelector('.reset');
@@ -121,7 +122,7 @@ function DisplayController() {
         }
     }
 
-    function showGrid() {      
+    function showGrid() {
         let grid = document.createElement('div');
         grid.classList.add('gameboard');
         gameboardContainer.appendChild(grid);
@@ -139,8 +140,7 @@ function DisplayController() {
         });
     }
 
-    function handleNamesEvent(e) {
-        console.log('te');
+    function handleNamesEvent(e) {        
         let player1Name = username1.value;
         let player2Name = username2.value;
         e.preventDefault();
@@ -160,9 +160,12 @@ function DisplayController() {
         if (newGame.checkWinner(winner) === 'X') {
             displayWinner.textContent = `${firstPlayer.name} is the winner!`
             displayTurn.textContent = "";
+            console.log(newGame);
+
         } else if (newGame.checkWinner(winner) === 'O') {
             displayWinner.textContent = `${secondPlayer.name} is the winner!`
             displayTurn.textContent = "";
+            console.log(newGame);
         }
     }
 
@@ -174,9 +177,8 @@ function DisplayController() {
         }
     }
 
-    function handleGameEvent(e) {
-        console.log('alo');
-        if (e.target.textContent !== "" || !firstPlayer || !secondPlayer || firstPlayer.name === undefined || secondPlayer.name === undefined) {
+    function handleGameEvent(e) {        
+        if (e.target.textContent !== "" || !firstPlayer || !secondPlayer || firstPlayer.name === undefined || secondPlayer.name === undefined || newGame.gameFinished === true) {
             return void (0);
 
         } else {
@@ -190,13 +192,14 @@ function DisplayController() {
 
     function resetGame() {
         if (!gameboardContainer.firstChild) {
-            return void(0);
+            return void (0);
         }
         displayTurn.textContent = "";
         displayWinner.textContent = "";
         Gameboard.clearBoard();
         firstPlayer.name = undefined;
         secondPlayer.name = undefined;
+        newGame.gameFinished = false;
         GameController();
         hideGrid();
         showForm();
