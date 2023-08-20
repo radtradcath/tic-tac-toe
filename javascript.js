@@ -67,6 +67,7 @@ function GameController() {
 
 function DisplayController() {
     let gameboardContainer = document.querySelector('.gameboard-container');
+    let form = document.querySelector('form');
     let newGame = GameController();
     console.log(newGame);
     let inputContainer = document.querySelector('.input-container');
@@ -95,12 +96,14 @@ function DisplayController() {
         username1.setAttribute('type', 'text');
         username1.setAttribute('id', 'username1');
         username1.setAttribute('name', 'username1');
+        username1.setAttribute('required', "");
 
         user2label.setAttribute('for', 'username2');
         user2label.textContent = "Enter Player 2 name:";
         username2.setAttribute('type', 'text');
         username2.setAttribute('id', 'username2');
         username2.setAttribute('name', 'username2');
+        username2.setAttribute('required', "");
 
         getNamesBtn.setAttribute('type', 'submit');
         getNamesBtn.setAttribute('id', 'getNames');
@@ -140,7 +143,12 @@ function DisplayController() {
         });
     }
 
-    function handleNamesEvent(e) {        
+    function handleNamesEvent(e) {
+        let form = document.querySelector('form');   
+        let isFormValid = form.checkValidity();
+        if (!isFormValid) {
+            form.reportValidity();
+        } else {
         let player1Name = username1.value;
         let player2Name = username2.value;
         e.preventDefault();
@@ -149,6 +157,7 @@ function DisplayController() {
         firstPlayer = playerFactory(player1Name, 'X');
         secondPlayer = playerFactory(player2Name, 'O');
         displayTurn.textContent = `${firstPlayer.name}'s turn`;
+        }
     }
 
     function updateDisplayTurn() {
