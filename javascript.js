@@ -19,6 +19,7 @@ function GameController() {
     let gameFinished = false;
 
     function chooseCell(cell, playerMark) {
+        console.log(cell);
         if (!Gameboard.gameboard[cell]) {
             Gameboard.gameboard[cell] = playerMark;
         }
@@ -163,12 +164,37 @@ function DisplayController() {
     aiBtn.addEventListener('click', handleAiEvent);
 
     function handleAiEvent() {
-        let form = document.querySelector('form');
+        let form = document.querySelector('form');        
         let userName2 = document.querySelector('#username2');
         let user2label = document.querySelector('#user2label');
         aiPlayer = true;
         form.removeChild(userName2);
         form.removeChild(user2label);
+        aiBtn.textContent = 'Play against other player.';
+
+        aiBtn.removeEventListener('click', handleAiEvent);
+        aiBtn.addEventListener('click', changeToTwoPlayers);
+    }
+
+    function changeToTwoPlayers() {
+        let form = document.querySelector('form');
+        let user2label = document.createElement('label');
+        let username2 = document.createElement('input');
+
+        aiPlayer = false;
+        user2label.setAttribute('for', 'username2');
+        user2label.setAttribute('id', 'user2label');
+        user2label.textContent = "Enter Player 2 name:";
+        username2.setAttribute('type', 'text');
+        username2.setAttribute('id', 'username2');
+        username2.setAttribute('name', 'username2');
+        username2.setAttribute('required', "");
+        form.appendChild(user2label);
+        form.appendChild(username2);
+
+        aiBtn.textContent = "Play Against Ai";
+        aiBtn.removeEventListener('click', changeToTwoPlayers);
+        aiBtn.addEventListener('click', handleAiEvent);
     }
 
     function handleNamesEvent(e) {
@@ -228,6 +254,13 @@ function DisplayController() {
     }
 
     function handleGameEvent(e) {
+        console.log('clicked');
+        console.log(firstPlayer);
+        console.log(secondPlayer);
+        console.log(firstPlayer.name);
+        console.log(secondPlayer.name);
+        console.log(newGame.gameFinished);
+        console.log(aiPlayer);
         if (e.target.textContent !== "" || !firstPlayer || !secondPlayer || firstPlayer.name === undefined || secondPlayer.name === undefined || newGame.gameFinished === true) {
             return void (0);
         } else {
@@ -237,6 +270,12 @@ function DisplayController() {
                 if (Gameboard.gameboard.includes(null)) {
                     newGame.chooseCell(newGame.aiChooseCell(), newGame.handleTurn(firstPlayer, secondPlayer));
                 }
+                checkEndGame(newGame.playerMark);
+                renderGameboard();
+                updateDisplayTurn();
+            } else if (aiPlayer === false) {
+                
+                newGame.chooseCell(e.target.id, newGame.handleTurn(firstPlayer, secondPlayer));
                 checkEndGame(newGame.playerMark);
                 renderGameboard();
                 updateDisplayTurn();
