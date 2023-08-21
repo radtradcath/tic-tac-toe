@@ -25,11 +25,12 @@ function GameController() {
     }
 
     function aiChooseCell() {
-        let randomCell;
+        let randomCell;        
 
         while (Gameboard.gameboard[randomCell] !== null) {
             randomCell = Math.floor(Math.random() * 9);
         };
+        
         return randomCell;
     }
 
@@ -90,6 +91,7 @@ function DisplayController() {
     let firstPlayer;
     let secondPlayer;
     let aiPlayer = false;
+    let isAiPlaying = false;
 
     function hideForm() {
         while (inputContainer.firstChild) {
@@ -257,21 +259,29 @@ function DisplayController() {
         }
     }
 
-    function handleGameEvent(e) {        
-        if (e.target.textContent !== "" || !firstPlayer || !secondPlayer || firstPlayer.name === undefined || secondPlayer.name === undefined || newGame.gameFinished === true) {
+    function handleAiIsPlaying() {        
+            isAiPlaying = false;        
+    }
+
+    function handleGameEvent(e) {  
+        console.log(isAiPlaying);      
+        if (e.target.textContent !== "" || !firstPlayer || !secondPlayer || firstPlayer.name === undefined || secondPlayer.name === undefined || newGame.gameFinished === true || isAiPlaying === true) {
             return void (0);
         } else {
-            if (aiPlayer === true) {
+            if (aiPlayer === true) {                
                 newGame.chooseCell(e.target.id, newGame.handleTurn(firstPlayer, secondPlayer));
                 renderGameboard();
                 checkEndGame(newGame.playerMark);
-                updateDisplayTurn();
+                updateDisplayTurn();                             
 
                 if (Gameboard.gameboard.includes(null) && !newGame.gameFinished) {
+                    isAiPlaying = true;                    
+                    setTimeout(handleAiIsPlaying, 1500);                    
                     setTimeout(function() {newGame.chooseCell(newGame.aiChooseCell(), newGame.handleTurn(firstPlayer, secondPlayer))},1500);
                     setTimeout(function() {checkEndGame(newGame.playerMark)}, 1500);
                     setTimeout(function() {renderGameboard()}, 1500);
                     setTimeout(function() {updateDisplayTurn()}, 1500);
+                    setTimeout(function() {handleAiIsPlaying}, 1600);
                 }                
             } else if (aiPlayer === false) {
                 
