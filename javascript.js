@@ -18,8 +18,7 @@ function GameController() {
     let playerMark;
     let gameFinished = false;
 
-    function chooseCell(cell, playerMark) {
-        console.log(cell);
+    function chooseCell(cell, playerMark) {         
         if (!Gameboard.gameboard[cell]) {
             Gameboard.gameboard[cell] = playerMark;
         }
@@ -130,9 +129,9 @@ function DisplayController() {
         inputContainer.appendChild(form);
         form.appendChild(user1label);
         form.appendChild(username1);
-        form.appendChild(user2label);
-        form.appendChild(username2);
         form.appendChild(getNamesBtn);
+        form.appendChild(user2label);
+        form.appendChild(username2);       
 
 
         getNamesBtn.addEventListener('click', handleNamesEvent);
@@ -170,18 +169,20 @@ function DisplayController() {
         aiPlayer = true;
         form.removeChild(userName2);
         form.removeChild(user2label);
-        aiBtn.textContent = 'Play against other player.';
+        aiBtn.textContent = 'Two Players';
 
         aiBtn.removeEventListener('click', handleAiEvent);
         aiBtn.addEventListener('click', changeToTwoPlayers);
     }
 
     function changeToTwoPlayers() {
-        let form = document.querySelector('form');
-        let user2label = document.createElement('label');
-        let username2 = document.createElement('input');
-
         aiPlayer = false;
+        let form = document.querySelector('form');
+
+        if (form.children.length < 5) {        
+        let user2label = document.createElement('label');
+        let username2 = document.createElement('input');        
+        
         user2label.setAttribute('for', 'username2');
         user2label.setAttribute('id', 'user2label');
         user2label.textContent = "Enter Player 2 name:";
@@ -191,6 +192,7 @@ function DisplayController() {
         username2.setAttribute('required', "");
         form.appendChild(user2label);
         form.appendChild(username2);
+        }
 
         aiBtn.textContent = "Play Against Ai";
         aiBtn.removeEventListener('click', changeToTwoPlayers);
@@ -209,6 +211,7 @@ function DisplayController() {
             player2Name = username2.value;
             e.preventDefault();
             hideForm();
+            aiBtn.setAttribute('hidden', "");
             showGrid();
             firstPlayer = playerFactory(player1Name, 'X');
             secondPlayer = playerFactory(player2Name, 'O');
@@ -218,6 +221,7 @@ function DisplayController() {
             player2Name = 'Computer';
             e.preventDefault();
             hideForm();
+            aiBtn.setAttribute('hidden', "");
             showGrid();
             firstPlayer = playerFactory(player1Name, 'X');
             secondPlayer = playerFactory('Computer', 'O');
@@ -253,26 +257,22 @@ function DisplayController() {
         }
     }
 
-    function handleGameEvent(e) {
-        console.log('clicked');
-        console.log(firstPlayer);
-        console.log(secondPlayer);
-        console.log(firstPlayer.name);
-        console.log(secondPlayer.name);
-        console.log(newGame.gameFinished);
-        console.log(aiPlayer);
+    function handleGameEvent(e) {        
         if (e.target.textContent !== "" || !firstPlayer || !secondPlayer || firstPlayer.name === undefined || secondPlayer.name === undefined || newGame.gameFinished === true) {
             return void (0);
         } else {
             if (aiPlayer === true) {
                 newGame.chooseCell(e.target.id, newGame.handleTurn(firstPlayer, secondPlayer));
-                checkEndGame(newGame.playerMark);
-                if (Gameboard.gameboard.includes(null)) {
-                    newGame.chooseCell(newGame.aiChooseCell(), newGame.handleTurn(firstPlayer, secondPlayer));
-                }
-                checkEndGame(newGame.playerMark);
                 renderGameboard();
+                checkEndGame(newGame.playerMark);
                 updateDisplayTurn();
+
+                if (Gameboard.gameboard.includes(null) && !newGame.gameFinished) {
+                    setTimeout(function() {newGame.chooseCell(newGame.aiChooseCell(), newGame.handleTurn(firstPlayer, secondPlayer))},1500);
+                    setTimeout(function() {checkEndGame(newGame.playerMark)}, 1500);
+                    setTimeout(function() {renderGameboard()}, 1500);
+                    setTimeout(function() {updateDisplayTurn()}, 1500);
+                }                
             } else if (aiPlayer === false) {
                 
                 newGame.chooseCell(e.target.id, newGame.handleTurn(firstPlayer, secondPlayer));
@@ -297,6 +297,10 @@ function DisplayController() {
         GameController();
         hideGrid();
         showForm();
+        newGame.turn = 0;
+        aiPlayer = false;
+        aiBtn.removeAttribute('hidden');
+        aiBtn.textContent = 'Play Against Ai';
     }
 
     resetBtn.addEventListener('click', resetGame);
